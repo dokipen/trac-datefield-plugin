@@ -74,6 +74,7 @@ class DateFieldModule(Component):
                 except ValueError:
                     time.strptime(val, format.replace('y', 'Y'))
             except Exception:
+                self.log.debug('DateFieldModule: Got an exception, assuming it is a validation failure.\n'+traceback.format_exc())
                 yield field, 'Field %s does not seem to look like a date. The correct format is %s.' % \
                              (field, self.date_sep.join([c.upper()*(c=='y' and 4 or 2) for c in self.date_format]))
                 
