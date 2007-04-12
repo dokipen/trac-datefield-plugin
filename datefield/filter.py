@@ -5,6 +5,7 @@ from trac.ticket.api import ITicketManipulator
 from trac.config import Option
 
 import time
+import traceback
 
 class DateFieldModule(Component):
     """A module providing a JS date picker for custom fields."""

@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name = 'TracDateField',
-    version = '1.0',
+    version = '1.0.1',
     packages = ['datefield'],
     package_data = { 'datefield': ['templates/*.cs', 'htdocs/*.js', 'htdocs/*.css', 'htdocs/*.png' ] },
 
