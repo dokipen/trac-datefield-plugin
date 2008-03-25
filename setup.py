@@ -10,7 +10,7 @@ setup(
     package_data = { 'datefield': ['templates/*.cs', 'htdocs/*.js', 'htdocs/*.css', 'htdocs/*.png' ] },
 
     author = 'Noah Kantrowitz',
-    author_email = 'coderanger@yahoo.com',
+    author_email = 'noah@coderanger.net',
     description = 'Add custom date fields to Trac tickets.',
     license = 'BSD',
     keywords = 'trac plugin ticket',
