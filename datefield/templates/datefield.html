@@ -1,0 +1,14 @@
+<script type="text/javascript" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/" py:strip="">
+jQuery(function($) {
+    <py:for each="id in datefield.ids" >
+        jQuery('#field-${ id }').datepicker({
+            dateFormat: "${datefield.format}",
+            showOn: "both",
+            buttonImage: "${datefield.calendar}",
+            buttonImageOnly: true
+        });
+    </py:for>
+});
+</script>

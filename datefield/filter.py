@@ -7,11 +7,19 @@ from trac.config import Option
 import time
 import traceback
 
+datedict= {'y':'1996', 'm':'01', 'd': '01',}
+
 class DateFieldModule(Component):
     """A module providing a JS date picker for custom fields."""
     
-    date_format = Option('datefield', 'format', default='dmy',
-                         doc='The format to use for dates. Valid values are dmy, mdy, and ymd.')
+    date_format = Option('datefield', 'format', default='dd/mm/yy',
+             doc='The format to use for dates. d - day of month (no ' +
+             'leading zero), dd - day of month (two digits), m - month ' +
+             '(no leading zero), mm - month (two digits), y - year (two ' +
+             'digits), yy - year (four digits), D - name of day (short), DD ' +
+             '- name of day (long), M - name of month (short), MM - name of ' +
+             'month (long) "..." - literal text \'\' - single quote, ' +
+             'anything else - literal text.')
     date_sep = Option('datefield', 'separator', default='/',
                       doc='The separator character to use for dates.')
     
@@ -22,29 +30,25 @@ class DateFieldModule(Component):
         return req.path_info.startswith('/datefield')
 
     def process_request(self, req):
-        req.hdf['datefield.ids'] = list(self._date_fields())
-        req.hdf['datefield.calendar'] = req.href.chrome('datefield', 'calendar.png')
-        req.hdf['datefield.format'] = self.date_format
-        req.hdf['datefield.sep'] = self.date_sep
-        
-        return 'datefield.cs', 'text/javascript' 
+        self.log.debug("in datefield process_request")
+        global datedict
+        datefield = {}
+        datefield['calendar'] = req.href.chrome('datefield', 'calendar.png')
+        datefield['ids'] = list(self._date_fields())
+        datefield['format'] = self.date_format
+        return 'datefield.html', {'datefield': datefield},'text/javascript' 
     
     # IRequestFilter methods
     def pre_process_request(self, req, handler):
         return handler
             
-    def post_process_request(self, req, template, content_type):
+    def post_process_request(self, req, template, data, content_type):
         if req.path_info.startswith('/newticket') or req.path_info.startswith('/ticket'):
-            add_script(req, 'datefield/jquery.pack.js')
-            add_script(req, 'datefield/jquery.datePicker.js')
-            add_stylesheet(req, 'datefield/datePicker.css')
-            
-            # Add my dynamic JS junk
-            idx = 0
-            while req.hdf.get('chrome.scripts.%i.href'%idx):
-                idx += 1
-            req.hdf['chrome.scripts.%s'%idx] = {'href': req.href.datefield('datefield.js'), 'type': 'text/javascript'}
-        return template, content_type
+            add_script(req, 'datefield/jquery-ui.js')
+            #add_stylesheet(req, 'datefield/jquery-ui.css')
+
+            req.chrome['scripts'].append({'href': req.href.datefield('datefield.js'), 'type': 'text/javascript'})
+        return template, data, content_type
         
     # ITemplateProvider methods
     def get_htdocs_dirs(self):
