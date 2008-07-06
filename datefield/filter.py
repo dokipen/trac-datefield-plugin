@@ -7,21 +7,15 @@ from trac.config import Option
 import time
 import traceback
 
-datedict= {'y':'1996', 'm':'01', 'd': '01',}
-
 class DateFieldModule(Component):
     """A module providing a JS date picker for custom fields."""
     
-    date_format = Option('datefield', 'format', default='dd/mm/yy',
-             doc='The format to use for dates. d - day of month (no ' +
-             'leading zero), dd - day of month (two digits), m - month ' +
-             '(no leading zero), mm - month (two digits), y - year (two ' +
-             'digits), yy - year (four digits), D - name of day (short), DD ' +
-             '- name of day (long), M - name of month (short), MM - name of ' +
-             'month (long) "..." - literal text \'\' - single quote, ' +
-             'anything else - literal text.')
+    date_format = Option('datefield', 'format', default='dmy',
+             doc='The format to use for dates. Valid values are dmy, mdy, and ymd.')
+    first_day = Option('datefield', 'first_day', default='0', 
+            doc='First day of the week. 0 == Sunday.')
     date_sep = Option('datefield', 'separator', default='/',
-                      doc='The separator character to use for dates.')
+            doc='The separator character to use for dates.')
     
     implements(IRequestFilter, IRequestHandler, ITemplateProvider, ITicketManipulator)
     
@@ -30,12 +24,17 @@ class DateFieldModule(Component):
         return req.path_info.startswith('/datefield')
 
     def process_request(self, req):
-        self.log.debug("in datefield process_request")
-        global datedict
+        format = { 'dmy': 'dd%smm%syy',
+                   'mdy': 'mm%sdd%syy',
+                   'ymd': 'yy%smm%sdd' 
+                 }[self.date_format]%(self.date_sep, self.date_sep)
+
+        print format
         datefield = {}
         datefield['calendar'] = req.href.chrome('datefield', 'calendar.png')
         datefield['ids'] = list(self._date_fields())
-        datefield['format'] = self.date_format
+        datefield['format'] = format
+        datefield['first_day'] = self.first_day
         return 'datefield.html', {'datefield': datefield},'text/javascript' 
     
     # IRequestFilter methods
