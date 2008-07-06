@@ -12,7 +12,7 @@ class DateFieldModule(Component):
     
     date_format = Option('datefield', 'format', default='dmy',
              doc='The format to use for dates. Valid values are dmy, mdy, and ymd.')
-    first_day = Option('datefield', 'first_day', default='0', 
+    first_day = Option('datefield', 'first_day', 
             doc='First day of the week. 0 == Sunday.')
     date_sep = Option('datefield', 'separator', default='/',
             doc='The separator character to use for dates.')

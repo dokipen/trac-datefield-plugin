@@ -4,6 +4,9 @@
 jQuery(function($) {
     <py:for each="id in datefield.ids" >
         jQuery('#field-${ id }').datepicker({
+            <py:if test="datefield.first_day">
+                firstDay: "${datefield.first_day}",
+            </py:if>
             dateFormat: "${datefield.format}",
             showOn: "both",
             buttonImage: "${datefield.calendar}",
