@@ -5,7 +5,7 @@
 	padding: 0;
 	margin: 0;
 	background: #ddd;
-	width: 185px;
+	width: 225px;
 }
 #ui-datepicker-div {
 	display: none;
@@ -38,7 +38,7 @@ img.ui-datepicker-trigger {
 	color: #000;
 }
 * html .ui-datepicker-prompt {
-	width: 185px;
+	width: 225px;
 }
 .ui-datepicker-control, .ui-datepicker-links, .ui-datepicker-header, .ui-datepicker {
 	clear: both;
@@ -186,7 +186,7 @@ img.ui-datepicker-trigger {
 }
 .ui-datepicker-one-month {
 	float: left;
-	width: 185px;
+	width: 225px;
 }
 .ui-datepicker-new-row {
 	clear: left;
