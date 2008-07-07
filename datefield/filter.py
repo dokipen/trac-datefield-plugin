@@ -2,7 +2,7 @@ from trac.core import *
 from trac.web.api import IRequestFilter, IRequestHandler
 from trac.web.chrome import ITemplateProvider, add_script, add_stylesheet
 from trac.ticket.api import ITicketManipulator
-from trac.config import Option
+from trac.config import Option, IntOption
 
 import time
 import traceback
@@ -12,7 +12,7 @@ class DateFieldModule(Component):
     
     date_format = Option('datefield', 'format', default='dmy',
              doc='The format to use for dates. Valid values are dmy, mdy, and ymd.')
-    first_day = Option('datefield', 'first_day', 
+    first_day = IntOption('datefield', 'first_day', default=0,
             doc='First day of the week. 0 == Sunday.')
     date_sep = Option('datefield', 'separator', default='/',
             doc='The separator character to use for dates.')
@@ -30,12 +30,12 @@ class DateFieldModule(Component):
                  }[self.date_format]%(self.date_sep, self.date_sep)
 
         print format
-        datefield = {}
-        datefield['calendar'] = req.href.chrome('datefield', 'calendar.png')
-        datefield['ids'] = list(self._date_fields())
-        datefield['format'] = format
-        datefield['first_day'] = self.first_day
-        return 'datefield.html', {'datefield': datefield},'text/javascript' 
+        data = {}
+        data['calendar'] = req.href.chrome('datefield', 'calendar.png')
+        data['ids'] = list(self._date_fields())
+        data['format'] = format
+        data['first_day'] = self.first_day
+        return 'datefield.html', {'data': data},'text/javascript' 
     
     # IRequestFilter methods
     def pre_process_request(self, req, handler):
@@ -44,9 +44,9 @@ class DateFieldModule(Component):
     def post_process_request(self, req, template, data, content_type):
         if req.path_info.startswith('/newticket') or req.path_info.startswith('/ticket'):
             add_script(req, 'datefield/jquery-ui.js')
+            add_script(req, '/datefield/datefield.js')
             add_stylesheet(req, 'datefield/ui.datepicker.css')
-
-            req.chrome['scripts'].append({'href': req.href.datefield('datefield.js'), 'type': 'text/javascript'})
+            #req.chrome['scripts'].append({'href': req.href.datefield('datefield.js'), 'type': 'text/javascript'})
         return template, data, content_type
         
     # ITemplateProvider methods

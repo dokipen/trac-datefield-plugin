@@ -2,14 +2,15 @@
       xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:py="http://genshi.edgewall.org/" py:strip="">
 jQuery(function($) {
-    <py:for each="id in datefield.ids" >
+    <py:for each="id in data.ids" >
         jQuery('#field-${ id }').datepicker({
-            <py:if test="datefield.first_day">
-                firstDay: "${datefield.first_day}",
+            <!-- we do this instead of using the default because there is a bug in jquery-ui when using the firstDay parameter -->
+            <py:if test="data.first_day">
+                firstDay: "${data.first_day}",
             </py:if>
-            dateFormat: "${datefield.format}",
+            dateFormat: "${data.format}",
             showOn: "both",
-            buttonImage: "${datefield.calendar}",
+            buttonImage: "${data.calendar}",
             buttonImageOnly: true
         });
     </py:for>
