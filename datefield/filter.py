@@ -24,10 +24,11 @@ class DateFieldModule(Component):
         return req.path_info.startswith('/datefield')
 
     def process_request(self, req):
+        # Use get to handle default format
         format = { 'dmy': 'dd%smm%syy',
                    'mdy': 'mm%sdd%syy',
                    'ymd': 'yy%smm%sdd' 
-                 }[self.date_format]%(self.date_sep, self.date_sep)
+        }.get(self.date_format, 'dd%smm%syy')%(self.date_sep, self.date_sep)
 
         print format
         data = {}
