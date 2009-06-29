@@ -32,7 +32,7 @@ class DateFieldModule(Component):
 
         print format
         data = {}
-        data['calendar'] = req.href.chrome('datefield', 'calendar.png')
+        data['calendar'] = req.href.chrome('common', 'ics.png')
         data['ids'] = list(self._date_fields())
         data['format'] = format
         data['first_day'] = self.first_day
