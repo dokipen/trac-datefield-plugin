@@ -30,7 +30,6 @@ class DateFieldModule(Component):
                    'ymd': 'yy%smm%sdd' 
         }.get(self.date_format, 'dd%smm%syy')%(self.date_sep, self.date_sep)
 
-        print format
         data = {}
         data['calendar'] = req.href.chrome('common', 'ics.png')
         data['ids'] = list(self._date_fields())
