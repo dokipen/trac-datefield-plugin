@@ -7,7 +7,8 @@ setup(
     name = 'TracDateField',
     version = '1.0.1',
     packages = ['datefield'],
-    package_data = { 'datefield': ['templates/*.html', 'htdocs/*.css', 'htdocs/*.js', 'htdocs/*.png' ] },
+    package_data = { 'datefield': ['templates/*.html', 'htdocs/css/*.css', 
+        'htdocs/js/*.js', 'htdocs/images/*.png' ] },
 
     author = 'Noah Kantrowitz',
     author_email = 'noah@coderanger.net',
