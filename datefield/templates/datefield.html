@@ -4,10 +4,7 @@
 jQuery(function($) {
     <py:for each="id in data.ids" >
         jQuery('#field-${ id }').datepicker({
-            <!-- we do this instead of using the default because there is a bug in jquery-ui when using the firstDay parameter -->
-            <py:if test="data.first_day">
-                firstDay: "${data.first_day}",
-            </py:if>
+            firstDay: "${data.first_day}",
             dateFormat: "${data.format}",
             showOn: "both",
             buttonImage: "${data.calendar}",
