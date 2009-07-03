@@ -6,6 +6,7 @@ from trac.config import Option, IntOption
 
 import time
 import traceback
+import re
 
 class DateFieldModule(Component):
     """A module providing a JS date picker for custom fields."""
@@ -25,9 +26,10 @@ class DateFieldModule(Component):
 
     def process_request(self, req):
         # Use get to handle default format
-        format = { 'dmy': 'dd%smm%syy',
-                   'mdy': 'mm%sdd%syy',
-                   'ymd': 'yy%smm%sdd' 
+        format = { 
+            'dmy': 'dd%smm%syy',
+            'mdy': 'mm%sdd%syy',
+            'ymd': 'yy%smm%sdd' 
         }.get(self.date_format, 'dd%smm%syy')%(self.date_sep, self.date_sep)
 
         data = {}
@@ -70,8 +72,12 @@ class DateFieldModule(Component):
                 
                 if not val and self.config['ticket-custom'].getbool(field+'.date_empty', default=False):
                     continue
-                if len(val.split(self.date_sep)) != 3:
-                    raise Exception # Token exception to force failure
+                if self.date_sep and len(self.date_sep.strip()) > 0:
+                    if len(val.split(self.date_sep)) != 3:
+                        raise Exception # Token exception to force failure
+                else:
+                    if re.match('.*[^\d].*', val.strip()):
+                        raise Exception
                     
                 format = self.date_sep.join(['%'+c for c in self.date_format])     
                 try:
