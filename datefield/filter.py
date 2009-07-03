@@ -43,11 +43,11 @@ class DateFieldModule(Component):
             
     def post_process_request(self, req, template, data, content_type):
         if req.path_info.startswith('/newticket') or req.path_info.startswith('/ticket'):
-            add_script(req, 'datefield/jquery-ui.js')
+            add_script(req, 'datefield/js/jquery-ui.js')
+            # virtual script
             add_script(req, '/datefield/datefield.js')
-            add_stylesheet(req, 'datefield/jquery-ui.css')
-            add_stylesheet(req, 'datefield/ui.datepicker.css')
-            #req.chrome['scripts'].append({'href': req.href.datefield('datefield.js'), 'type': 'text/javascript'})
+            add_stylesheet(req, 'datefield/css/jquery-ui.css')
+            add_stylesheet(req, 'datefield/css/ui.datepicker.css')
         return template, data, content_type
         
     # ITemplateProvider methods
