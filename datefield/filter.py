@@ -44,7 +44,9 @@ class DateFieldModule(Component):
         return handler
             
     def post_process_request(self, req, template, data, content_type):
-        if req.path_info.startswith('/newticket') or req.path_info.startswith('/ticket'):
+        if req.path_info.startswith('/newticket') or \
+                req.path_info.startswith('/ticket') or \
+                req.path_info.startswith('/simpleticket'):
             add_script(req, 'datefield/js/jquery-ui.js')
             # virtual script
             add_script(req, '/datefield/datefield.js')
@@ -97,4 +99,4 @@ class DateFieldModule(Component):
         for key, value in self.config['ticket-custom'].options():
             if key.endswith('.date'):
                 yield key.split('.', 1)[0]
-    
+
