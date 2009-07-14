@@ -1,8 +1,11 @@
 from trac.core import *
-from trac.web.api import IRequestFilter, IRequestHandler
+from trac.web.api import IRequestFilter, IRequestHandler, ITemplateStreamFilter
 from trac.web.chrome import ITemplateProvider, add_script, add_stylesheet
 from trac.ticket.api import ITicketManipulator
 from trac.config import Option, IntOption
+
+from genshi.builder import tag
+from genshi.filters.transform import Transformer
 
 import time
 import traceback
@@ -99,4 +102,43 @@ class DateFieldModule(Component):
         for key, value in self.config['ticket-custom'].options():
             if key.endswith('.date'):
                 yield key.split('.', 1)[0]
+    
 
+
+class CustomFieldAdminTweak(Component):
+    implements(ITemplateStreamFilter, IRequestFilter)
+
+    def pre_process_request(self, req, handler):
+        if req.method == "POST" and req.href.endswith(u"/admin/ticket/customfields"):
+            if req.args.get('type') == 'date':
+                req.args['type'] = 'text'
+                self.config.set('ticket-custom', '%s.date'%(req.args.get('name')), 'true')
+                self.config.set('ticket-custom', '%s.date_empty'%(req.args.get('name')), req.args.get('date_empty', 'false'))
+        return handler
+
+    def post_process_request(self, template, content_type):
+        return (template, content_type)
+
+    def filter_stream(self, req, method, filename, stream, data):
+        if filename == "customfieldadmin.html":
+            add_script(req, 'datefield/js/customfield-admin.js')
+            add_stylesheet(req, 'datefield/css/customfield-admin.css')
+            stream = stream | Transformer('.//select[@id="type"]').append(
+                tag.option('Date', value='date', id="date_type_option")
+            )
+            stream = stream | Transformer(
+                './/form[@id="addcf"]/fieldset/div[@class="buttons"]'
+            ).before(
+                tag.div(
+                    tag.input(
+                        id="date_empty", 
+                        type="checkbox", 
+                        name="date_empty"
+                    ), 
+                    tag.label('Allow empty date'), 
+                    for_="date_empty", 
+                    class_="field",
+                    id="date_empty_option"
+                )
+            )
+        return stream
