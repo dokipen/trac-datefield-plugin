@@ -70,7 +70,7 @@ class DateFieldModule(Component):
     def validate_ticket(self, req, ticket): # dmy mdy ymd
         for field in self._date_fields():
             try:
-                val = ticket[field].strip()
+                val = (ticket[field] or u'').strip()
                 
                 if not val and self.config['ticket-custom'].getbool(field+'.date_empty', default=False):
                     continue
@@ -87,7 +87,7 @@ class DateFieldModule(Component):
                 except ValueError:
                     time.strptime(val, format.replace('y', 'Y'))
             except Exception:
-                self.log.debug('DateFieldModule: Got an exception, assuming it is a validation failure.\n'+traceback.format_exc())
+                self.log.warn('DateFieldModule: Got an exception, assuming it is a validation failure.\n'+traceback.format_exc())
                 yield field, 'Field %s does not seem to look like a date. The correct format is %s.' % \
                              (field, self.date_sep.join([c.upper()*(c=='y' and 4 or 2) for c in self.date_format]))
                 
