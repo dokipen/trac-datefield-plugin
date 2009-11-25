@@ -2,7 +2,7 @@ from trac.core import *
 from trac.web.api import IRequestFilter, IRequestHandler, ITemplateStreamFilter
 from trac.web.chrome import ITemplateProvider, add_script, add_stylesheet
 from trac.ticket.api import ITicketManipulator
-from trac.config import Option, IntOption
+from trac.config import Option, IntOption, BoolOption
 
 from genshi.builder import tag
 from genshi.filters.transform import Transformer
@@ -20,7 +20,9 @@ class DateFieldModule(Component):
             doc='First day of the week. 0 == Sunday.')
     date_sep = Option('datefield', 'separator', default='/',
             doc='The separator character to use for dates.')
-    
+    show_week = BoolOption('datefield', 'weeknumbers', default='false',
+            doc='Show ISO8601 week number in calendar?')
+
     implements(IRequestFilter, IRequestHandler, ITemplateProvider, ITicketManipulator)
     
     # IRequestHandler methods
@@ -40,6 +42,7 @@ class DateFieldModule(Component):
         data['ids'] = list(self._date_fields())
         data['format'] = format
         data['first_day'] = self.first_day
+        data['show_week'] = self.show_week
         return 'datefield.html', {'data': data},'text/javascript' 
     
     # IRequestFilter methods

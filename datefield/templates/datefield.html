@@ -7,6 +7,8 @@ jQuery(function($) {
             firstDay: "${data.first_day}",
             dateFormat: "${data.format}",
             showOn: "both",
+	    weekHeader: 'W',
+            showWeek: ${data.show_week and 'true' or 'false'},
             buttonImage: "${data.calendar}",
             buttonImageOnly: true
         });
