@@ -9,6 +9,10 @@ jQuery(function($) {
             showOn: "both",
 	    weekHeader: 'W',
             showWeek: ${data.show_week and 'true' or 'false'},
+            showButtonPanel: ${data.show_panel and 'true' or 'false'},
+            numberOfMonths: ${data.num_months or 1},
+            changeMonth: ${data.change_month and 'true' or 'false'},
+            changeYear: ${data.change_year and 'true' or 'false'},
             buttonImage: "${data.calendar}",
             buttonImageOnly: true
         });

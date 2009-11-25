@@ -22,6 +22,14 @@ class DateFieldModule(Component):
             doc='The separator character to use for dates.')
     show_week = BoolOption('datefield', 'weeknumbers', default='false',
             doc='Show ISO8601 week number in calendar?')
+    show_panel = BoolOption('datefield', 'panel', default='false',
+            doc='Show button panel at bottom? (Today, Done)')
+    change_month = BoolOption('datefield', 'change_month', default='false',
+            doc='Show a month dropdown in datepicker?')
+    change_year = BoolOption('datefield', 'change_year', default='false',
+            doc='Show a year dropdown in datepicker?')
+    num_months = IntOption('datefield', 'months', default='1',
+            doc='Number of months visible in datepicker')
 
     implements(IRequestFilter, IRequestHandler, ITemplateProvider, ITicketManipulator)
     
@@ -43,6 +51,10 @@ class DateFieldModule(Component):
         data['format'] = format
         data['first_day'] = self.first_day
         data['show_week'] = self.show_week
+        data['show_panel'] = self.show_panel
+        data['change_month'] = self.change_month
+        data['change_year'] = self.change_year
+        data['num_months'] = self.num_months
         return 'datefield.html', {'data': data},'text/javascript' 
     
     # IRequestFilter methods
