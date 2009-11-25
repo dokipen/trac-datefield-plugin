@@ -1,0 +1,3 @@
+*.egg-info
+*.pyc
+.stgit-edit.diff
