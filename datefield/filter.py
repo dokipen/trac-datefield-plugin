@@ -2,7 +2,7 @@ from trac.core import *
 from trac.web.api import IRequestFilter, IRequestHandler, ITemplateStreamFilter
 from trac.web.chrome import ITemplateProvider, add_script, add_stylesheet
 from trac.ticket.api import ITicketManipulator
-from trac.config import Option, IntOption, BoolOption
+from trac.config import Option, IntOption, BoolOption, ListOption
 
 from genshi.builder import tag
 from genshi.filters.transform import Transformer
@@ -15,24 +15,31 @@ class DateFieldModule(Component):
     """A module providing a JS date picker for custom fields."""
     
     date_format = Option('datefield', 'format', default='dmy',
-             doc='The format to use for dates. Valid values are dmy, mdy, and ymd.')
+        doc='The format to use for dates. Valid values are dmy, mdy, and ymd.')
     first_day = IntOption('datefield', 'first_day', default=0,
-            doc='First day of the week. 0 == Sunday.')
+        doc='First day of the week. 0 == Sunday.')
     date_sep = Option('datefield', 'separator', default='/',
-            doc='The separator character to use for dates.')
+        doc='The separator character to use for dates.')
     show_week = BoolOption('datefield', 'weeknumbers', default='false',
-            doc='Show ISO8601 week number in calendar?')
+        doc='Show ISO8601 week number in calendar?')
     show_panel = BoolOption('datefield', 'panel', default='false',
-            doc='Show button panel at bottom? (Today, Done)')
+        doc='Show button panel at bottom? (Today, Done)')
     change_month = BoolOption('datefield', 'change_month', default='false',
-            doc='Show a month dropdown in datepicker?')
+        doc='Show a month dropdown in datepicker?')
     change_year = BoolOption('datefield', 'change_year', default='false',
-            doc='Show a year dropdown in datepicker?')
+        doc='Show a year dropdown in datepicker?')
     num_months = IntOption('datefield', 'months', default='1',
-            doc='Number of months visible in datepicker')
+        doc='Number of months visible in datepicker')
+    match_req = ListOption('datefield', 'match_request', default='',
+        doc='Additional request paths to match (use input class="datepick")')
+    use_milestone = BoolOption('datefield', 'milestone', default='false',
+        doc="""Use datepicker for milestone due/completed fields? 
+        If you turn this on, you must use MM/DD/YYYY for the date format.
+        Set format to mdy and separator to / (default=Off)""")
 
-    implements(IRequestFilter, IRequestHandler, ITemplateProvider, ITicketManipulator)
-    
+    implements(IRequestFilter, IRequestHandler, ITemplateProvider, \
+            ITicketManipulator, ITemplateStreamFilter)
+
     # IRequestHandler methods
     def match_request(self, req):
         return req.path_info.startswith('/datefield')
@@ -47,7 +54,6 @@ class DateFieldModule(Component):
 
         data = {}
         data['calendar'] = req.href.chrome('common', 'ics.png')
-        data['ids'] = list(self._date_fields())
         data['format'] = format
         data['first_day'] = self.first_day
         data['show_week'] = self.show_week
@@ -56,15 +62,43 @@ class DateFieldModule(Component):
         data['change_year'] = self.change_year
         data['num_months'] = self.num_months
         return 'datefield.html', {'data': data},'text/javascript' 
+
+    # ITemplateStreamFilter methods
+    def filter_stream(self, req, method, filename, stream, data):
+        def attr_callback(name, event):
+            attrs = event[1][1]
+            return ' '.join(filter(None, (attrs.get('class'), 'datepick')))
+        if filename == 'ticket.html':
+            for field in list(self._date_fields()):
+                stream = stream | Transformer(
+                    '//input[@name="field_' + field + '"]'
+                ).attr('class', attr_callback)
+        elif self.use_milestone and filename in ('milestone_edit.html', 
+                'admin_milestones.html'):
+            for field in ('duedate', 'completeddate'):
+                stream = stream | Transformer(
+                    '//input[@name="' + field + '"]'
+                ).attr('class', attr_callback)
+        return stream
+    
     
     # IRequestFilter methods
     def pre_process_request(self, req, handler):
         return handler
             
     def post_process_request(self, req, template, data, content_type):
-        if req.path_info.startswith('/newticket') or \
-                req.path_info.startswith('/ticket') or \
-                req.path_info.startswith('/simpleticket'):
+        mine = ['/newticket', '/ticket', '/simpleticket']
+        if self.use_milestone:
+            mine.append('/milestone')
+            mine.append('/admin/ticket/milestones')
+
+        match = False
+        for target in mine + self.match_req:
+            if req.path_info.startswith(target):
+                match = True
+                break
+
+        if match:
             add_script(req, 'datefield/js/jquery-ui.js')
             # virtual script
             add_script(req, '/datefield/datefield.js')

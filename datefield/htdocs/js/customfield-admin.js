@@ -1,4 +1,4 @@
-jQuery(window).ready(function () {
+jQuery(document).ready(function($) {
   $('#date_empty_option').hide();
   $('#type').change(function() {
     if ($('#type').val() == 'date') {

@@ -1,21 +1,19 @@
 <script type="text/javascript" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:py="http://genshi.edgewall.org/" py:strip="">
-jQuery(function($) {
-    <py:for each="id in data.ids" >
-        jQuery('#field-${ id }').datepicker({
-            firstDay: "${data.first_day}",
-            dateFormat: "${data.format}",
-            showOn: "both",
-	    weekHeader: 'W',
-            showWeek: ${data.show_week and 'true' or 'false'},
-            showButtonPanel: ${data.show_panel and 'true' or 'false'},
-            numberOfMonths: ${data.num_months or 1},
-            changeMonth: ${data.change_month and 'true' or 'false'},
-            changeYear: ${data.change_year and 'true' or 'false'},
-            buttonImage: "${data.calendar}",
-            buttonImageOnly: true
-        });
-    </py:for>
+jQuery(document).ready(function($) {
+    jQuery('.datepick').datepicker({
+        firstDay: "${data.first_day}",
+        dateFormat: "${data.format}",
+        showOn: "both",
+        weekHeader: 'W',
+        showWeek: ${data.show_week and 'true' or 'false'},
+        showButtonPanel: ${data.show_panel and 'true' or 'false'},
+        numberOfMonths: ${data.num_months or 1},
+        changeMonth: ${data.change_month and 'true' or 'false'},
+        changeYear: ${data.change_year and 'true' or 'false'},
+        buttonImage: "${data.calendar}",
+        buttonImageOnly: true
+    });
 });
 </script>
